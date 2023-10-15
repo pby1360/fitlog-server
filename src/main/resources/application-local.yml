@@ -1,0 +1,32 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    hikari:
+      auth-db:
+        jdbc-url: jdbc:mysql://toolbox-1.cczpiq6o68pr.ap-northeast-2.rds.amazonaws.com:3306/auth?characterEncoding=UTF-8&serverTimezone=UTC
+        username: admin
+        driver-class-name: com.mysql.cj.jdbc.Driver
+      memo-db:
+        jdbc-url: jdbc:mysql://toolbox-1.cczpiq6o68pr.ap-northeast-2.rds.amazonaws.com:3306/fitlog?characterEncoding=UTF-8&serverTimezone=UTC
+        username: admin
+        driver-class-name: com.mysql.cj.jdbc.Driver
+      minimum-idle: 1
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  jwt:
+server:
+  port: 8080
+login:
+  google:
+    redirect-uri: 'http://localhost:3000/sign-in'
+    token-uri: 'https://oauth2.googleapis.com/token'
+    resource-uri: 'https://www.googleapis.com/oauth2/v2/userinfo'
