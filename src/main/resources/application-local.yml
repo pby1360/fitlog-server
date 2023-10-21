@@ -7,10 +7,12 @@ spring:
       auth-db:
         jdbc-url: jdbc:mysql://toolbox-1.cczpiq6o68pr.ap-northeast-2.rds.amazonaws.com:3306/auth?characterEncoding=UTF-8&serverTimezone=UTC
         username: admin
+        password: comet2059!
         driver-class-name: com.mysql.cj.jdbc.Driver
-      memo-db:
+      fitlog-db:
         jdbc-url: jdbc:mysql://toolbox-1.cczpiq6o68pr.ap-northeast-2.rds.amazonaws.com:3306/fitlog?characterEncoding=UTF-8&serverTimezone=UTC
         username: admin
+        password: comet2059!
         driver-class-name: com.mysql.cj.jdbc.Driver
       minimum-idle: 1
   jpa:
@@ -23,10 +25,13 @@ spring:
       max-file-size: 50MB
       max-request-size: 50MB
   jwt:
+    secret: 'quddbscomet5015!thddlquddbscomet5015!thddlquddbscomet5015!thddl'
 server:
   port: 8080
 login:
   google:
+    client-id: '676639504875-a0lpq23f7nvdnj3n4tojeh7mqc339jfg.apps.googleusercontent.com'
+    client-secret: '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'
     redirect-uri: 'http://localhost:3000/sign-in'
     token-uri: 'https://oauth2.googleapis.com/token'
     resource-uri: 'https://www.googleapis.com/oauth2/v2/userinfo'
