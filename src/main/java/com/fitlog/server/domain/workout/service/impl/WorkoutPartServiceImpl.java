@@ -1,10 +1,11 @@
 package com.fitlog.server.domain.workout.service.impl;
 
 import com.fitlog.server.domain.workout.dto.WorkoutPartDto;
+import com.fitlog.server.domain.workout.dto.WorkoutPartItemDto;
 import com.fitlog.server.domain.workout.entity.WorkoutPart;
 import com.fitlog.server.domain.workout.entity.WorkoutPartItem;
 import com.fitlog.server.domain.workout.repository.WorkoutPartRepository;
-import com.fitlog.server.domain.workout.service.WorkoutMasterService;
+import com.fitlog.server.domain.workout.service.WorkoutPartService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +14,11 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class WorkoutMasterServiceImpl implements WorkoutMasterService {
+public class WorkoutPartServiceImpl implements WorkoutPartService {
 
     WorkoutPartRepository partRepository;
 
-    public WorkoutMasterServiceImpl(WorkoutPartRepository partRepository) {
+    public WorkoutPartServiceImpl(WorkoutPartRepository partRepository) {
         this.partRepository = partRepository;
     }
 
@@ -38,7 +39,22 @@ public class WorkoutMasterServiceImpl implements WorkoutMasterService {
     }
 
     @Override
-    public List<WorkoutPartItem> getWorkoutPartItemList(Long partId) {
-        return null;
+    public void modifyWorkoutPart(WorkoutPartDto workoutPartDto) {
+        WorkoutPart workoutPart = partRepository.findById(workoutPartDto.getId()).orElseThrow();
+        workoutPart.modify(workoutPartDto);
+        partRepository.save(workoutPart);
+    }
+
+    @Override
+    public void deleteWorkoutPart(Long workoutPartId) {
+        partRepository.deleteById(workoutPartId);
+    }
+
+    @Override
+    public WorkoutPartDto getWorkoutPartWithItems(Long workoutPartId) {
+        WorkoutPart workoutPart = partRepository.findById(workoutPartId).orElseThrow();
+        WorkoutPartDto dto = WorkoutPartDto.toDto(workoutPart);
+        dto.setItems(workoutPart.getWorkoutPartItems().stream().map(item -> WorkoutPartItemDto.toDto(item)).collect(Collectors.toList()));
+        return dto;
     }
 }

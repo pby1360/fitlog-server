@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,12 +21,27 @@ public class WorkoutPart extends BaseEntity {
     private Long userId;
     private String name;
     private String description;
+    @OneToMany(mappedBy = "workoutPart", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<WorkoutPartItem> workoutPartItems = new ArrayList<>();
 
     public static WorkoutPart create (WorkoutPartDto dto) {
         WorkoutPart entity = new WorkoutPart();
         entity.userId = dto.getUserId();
         entity.name = dto.getName();
         entity.description = dto.getDescription();
+        return entity;
+    }
+
+    public WorkoutPart modify (WorkoutPartDto dto) {
+        this.name = dto.getName();
+        this.description = dto.getDescription();
+        this.setMemo(dto.getMemo());
+        return this;
+    }
+
+    public static WorkoutPart of (Long id) {
+        WorkoutPart entity = new WorkoutPart();
+        entity.id = id;
         return entity;
     }
 
@@ -35,6 +52,7 @@ public class WorkoutPart extends BaseEntity {
                 ", userId=" + userId +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", workoutPartItems=" + workoutPartItems +
                 '}';
     }
 }
