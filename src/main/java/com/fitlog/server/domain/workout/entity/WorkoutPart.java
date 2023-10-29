@@ -32,11 +32,10 @@ public class WorkoutPart extends BaseEntity {
         return entity;
     }
 
-    public WorkoutPart modify (WorkoutPartDto dto) {
+    public void modify (WorkoutPartDto dto) {
         this.name = dto.getName();
         this.description = dto.getDescription();
         this.setMemo(dto.getMemo());
-        return this;
     }
 
     public static WorkoutPart of (Long id) {

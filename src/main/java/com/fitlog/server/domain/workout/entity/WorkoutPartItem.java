@@ -30,4 +30,9 @@ public class WorkoutPartItem extends BaseEntity {
         return entity;
     }
 
+    public void modify (WorkoutPartItemDto dto) {
+        this.name = dto.getName();
+        this.description = dto.getDescription();
+        this.setMemo(dto.getMemo());
+    }
 }

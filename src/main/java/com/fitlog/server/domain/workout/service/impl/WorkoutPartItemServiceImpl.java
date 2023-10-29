@@ -17,8 +17,25 @@ public class WorkoutPartItemServiceImpl implements WorkoutPartItemService {
     }
 
     @Override
+    public WorkoutPartItemDto getWorkoutPartItemDetail(Long workoutPartItemId) {
+        return repository.findById(workoutPartItemId).map(WorkoutPartItemDto::toDto).orElseThrow();
+    }
+
+    @Override
     public void addWorkoutPartItem(WorkoutPartItemDto workoutPartItemDto) {
         WorkoutPartItem item = WorkoutPartItem.create(workoutPartItemDto);
         repository.save(item);
+    }
+
+    @Override
+    public void modifyWorkoutPartItem(WorkoutPartItemDto workoutPartItemDto) {
+        WorkoutPartItem item = repository.findById(workoutPartItemDto.getId()).orElseThrow();
+        item.modify(workoutPartItemDto);
+        repository.save(item);
+    }
+
+    @Override
+    public void deleteWorkoutPartItem(Long workoutPartItemId) {
+        repository.deleteById(workoutPartItemId);
     }
 }
