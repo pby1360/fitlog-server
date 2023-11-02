@@ -6,7 +6,7 @@ import com.fitlog.server.domain.workout.dto.WorkoutPartItemDto;
 import lombok.Getter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Getter
