@@ -28,15 +28,10 @@ spring:
     secret: 'quddbscomet5015!thddlquddbscomet5015!thddlquddbscomet5015!thddl'
 server:
   port: 8080
-logging:
-  file:
-    name: logs/toolbox.log
-    max-size: 10MB
-    max-history: 1000
 login:
   google:
-    client-id: '676639504875-a0lpq23f7nvdnj3n4tojeh7mqc339jfg.apps.googleusercontent.com'
-    client-secret: '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'
-    redirect-uri: 'http://toolbox.monster/login'
+    client-id: '759530149928-f00enmm1gc7gorf6116nop89253tokk4.apps.googleusercontent.com'
+    client-secret: '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'
+    redirect-uri: 'http://fitlog.monster/sign-in'
     token-uri: 'https://oauth2.googleapis.com/token'
     resource-uri: 'https://www.googleapis.com/oauth2/v2/userinfo'
