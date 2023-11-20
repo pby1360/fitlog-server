@@ -3,7 +3,6 @@ package com.fitlog.server.domain.workout.entity;
 import com.fitlog.server.common.BaseEntity;
 import com.fitlog.server.domain.workout.dto.WorkoutPartDto;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
