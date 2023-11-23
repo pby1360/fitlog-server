@@ -1,6 +1,8 @@
 package com.fitlog.server.domain.workout.controller;
 
 import com.fitlog.server.domain.workout.dto.WorkoutProgramDto;
+import com.fitlog.server.domain.workout.dto.WorkoutProgramPartDto;
+import com.fitlog.server.domain.workout.service.WorkoutProgramPartService;
 import com.fitlog.server.domain.workout.service.WorkoutProgramService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,9 +17,11 @@ import java.util.NoSuchElementException;
 public class WorkoutProgramController {
 
     private WorkoutProgramService service;
+    private WorkoutProgramPartService partService;
 
-    public WorkoutProgramController(WorkoutProgramService service) {
+    public WorkoutProgramController(WorkoutProgramService service, WorkoutProgramPartService partService) {
         this.service = service;
+        this.partService = partService;
     }
 
     @GetMapping
@@ -76,6 +80,30 @@ public class WorkoutProgramController {
         } catch (NoSuchElementException e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity addProgramPart(@RequestBody WorkoutProgramPartDto newPart) {
+        try {
+            partService.add(newPart);
+            return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/{id}/parts/{partId}")
+    public ResponseEntity getProgramList(@PathVariable Long id, @PathVariable Long partId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(partService.detail(partId));
+        } catch (NoSuchElementException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
