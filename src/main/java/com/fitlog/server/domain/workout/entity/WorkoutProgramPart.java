@@ -14,7 +14,7 @@ public class WorkoutProgramPart extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long workoutProgramId;
-    @JoinColumn
+    @ManyToOne
     private WorkoutPart workoutPart;
 //    private Long workoutPartId;
     private String description;
@@ -26,5 +26,9 @@ public class WorkoutProgramPart extends BaseEntity {
 //        entity.workoutPartId = dto.workoutPartId();
         entity.description = dto.description();
         return entity;
+    }
+
+    public void modify (WorkoutProgramPartDto dto) {
+        this.description = dto.description();
     }
 }

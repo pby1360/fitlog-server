@@ -76,6 +76,7 @@ public class WorkoutProgramController {
     public ResponseEntity deleteProgram(@PathVariable Long id) {
         try {
             service.delete(id);
+            partService.deleteAll(id);
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (NoSuchElementException e) {
             log.error(e.getMessage());
@@ -98,12 +99,53 @@ public class WorkoutProgramController {
     }
 
     @GetMapping("/{id}/parts/{partId}")
-    public ResponseEntity getProgramList(@PathVariable Long id, @PathVariable Long partId) {
+    public ResponseEntity getProgramPartDetail(@PathVariable Long id, @PathVariable Long partId) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(partService.detail(partId));
         } catch (NoSuchElementException e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/{id}/parts")
+    public ResponseEntity getProgramPartList(@PathVariable Long id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(partService.list(id));
+        } catch (NoSuchElementException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PutMapping ("/{id}/parts/{partId}")
+    public ResponseEntity modifyProgramPart(@PathVariable Long id, @PathVariable Long partId, @RequestBody WorkoutProgramPartDto dto) {
+        try {
+            partService.modify(dto);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (NoSuchElementException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @DeleteMapping ("/{id}/parts/{partId}")
+    public ResponseEntity deleteProgramPart(@PathVariable Long id, @PathVariable Long partId) {
+        try {
+            partService.delete(partId);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (NoSuchElementException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
