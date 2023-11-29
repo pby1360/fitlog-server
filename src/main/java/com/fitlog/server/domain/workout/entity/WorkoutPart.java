@@ -20,7 +20,8 @@ public class WorkoutPart extends BaseEntity {
     private Long userId;
     private String name;
     private String description;
-    @OneToMany(mappedBy = "workoutPart", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "workoutPartId")
     private List<WorkoutPartItem> workoutPartItems = new ArrayList<>();
 
     public static WorkoutPart create (WorkoutPartDto dto) {
