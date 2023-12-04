@@ -2,6 +2,8 @@ package com.fitlog.server.domain.workout.controller;
 
 import com.fitlog.server.domain.workout.dto.WorkoutProgramDto;
 import com.fitlog.server.domain.workout.dto.WorkoutProgramPartDto;
+import com.fitlog.server.domain.workout.dto.WorkoutProgramPartItemDto;
+import com.fitlog.server.domain.workout.service.WorkoutProgramPartItemService;
 import com.fitlog.server.domain.workout.service.WorkoutProgramPartService;
 import com.fitlog.server.domain.workout.service.WorkoutProgramService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +21,12 @@ public class WorkoutProgramController {
     private WorkoutProgramService service;
     private WorkoutProgramPartService partService;
 
-    public WorkoutProgramController(WorkoutProgramService service, WorkoutProgramPartService partService) {
+    private WorkoutProgramPartItemService partItemService;
+
+    public WorkoutProgramController(WorkoutProgramService service, WorkoutProgramPartService partService, WorkoutProgramPartItemService partItemService) {
         this.service = service;
         this.partService = partService;
+        this.partItemService = partItemService;
     }
 
     @GetMapping
@@ -87,7 +92,7 @@ public class WorkoutProgramController {
         }
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/{id}/parts")
     public ResponseEntity addProgramPart(@RequestBody WorkoutProgramPartDto newPart) {
         try {
             partService.add(newPart);
@@ -146,6 +151,65 @@ public class WorkoutProgramController {
         } catch (NoSuchElementException e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/{id}/parts/{partId}/items/{itemId}")
+    public ResponseEntity getProgramPartItemDetail(@PathVariable Long id, @PathVariable Long partId, @PathVariable Long itemId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(partItemService.detail(itemId));
+        } catch (NoSuchElementException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/{id}/parts/{partId}/items")
+    public ResponseEntity getProgramPartItemList(@PathVariable Long id, @PathVariable Long partId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(partItemService.list(partId));
+        } catch (NoSuchElementException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PostMapping("/{id}/parts/{partId}/items")
+    public ResponseEntity addProgramPartItem(@RequestBody WorkoutProgramPartItemDto newPartItem) {
+        try {
+            partItemService.add(newPartItem);
+            return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PutMapping("/{id}/parts/{partId}/items/{itemId}")
+    public ResponseEntity modifyProgramPartItem(@RequestBody WorkoutProgramPartItemDto item) {
+        try {
+            partItemService.modify(item);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @DeleteMapping("/{id}/parts/{partId}/items/{itemId}")
+    public ResponseEntity deleteProgramPartItem(@PathVariable Long itemId) {
+        try {
+            partItemService.delete(itemId);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
