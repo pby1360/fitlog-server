@@ -34,4 +34,12 @@ public class WorkoutProgramPartItemSet extends BaseEntity {
 
         return newEntity;
     }
+
+    public void modify (WorkoutProgramPartItemSetDto dto) {
+        this.workoutProgramPartItemId = dto.workoutProgramPartItemId();
+        this.count = dto.count();
+        this.order = dto.order();
+        this.restTime = dto.restTime();
+        this.description = dto.description();
+    }
 }
