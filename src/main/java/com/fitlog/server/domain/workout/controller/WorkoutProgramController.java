@@ -1,9 +1,6 @@
 package com.fitlog.server.domain.workout.controller;
 
-import com.fitlog.server.domain.workout.dto.WorkoutProgramDto;
-import com.fitlog.server.domain.workout.dto.WorkoutProgramPartDto;
-import com.fitlog.server.domain.workout.dto.WorkoutProgramPartItemDto;
-import com.fitlog.server.domain.workout.dto.WorkoutProgramPartItemSetDto;
+import com.fitlog.server.domain.workout.dto.*;
 import com.fitlog.server.domain.workout.entity.WorkoutProgramPartItemSet;
 import com.fitlog.server.domain.workout.service.WorkoutProgramPartItemService;
 import com.fitlog.server.domain.workout.service.WorkoutProgramPartItemSetService;
@@ -14,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -98,6 +96,8 @@ public class WorkoutProgramController {
 
     @PostMapping("/{id}/parts")
     public ResponseEntity addProgramPart(@RequestBody WorkoutProgramPartDto newPart) {
+        log.info(newPart.toString());
+
         try {
             partService.add(newPart);
             return ResponseEntity.status(HttpStatus.CREATED).body(null);
@@ -121,9 +121,11 @@ public class WorkoutProgramController {
     }
 
     @GetMapping("/{id}/parts")
-    public ResponseEntity getProgramPartList(@PathVariable Long id) {
+    public ResponseEntity getProgramWithPartList(@PathVariable Long id) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(partService.list(id));
+            WorkoutProgramDto program= service.detail(id);
+            List<WorkoutProgramPartDto> programPartList = partService.list(id);
+            return ResponseEntity.status(HttpStatus.OK).body(WorkoutProgramWithPartsDto.of(program, programPartList));
         } catch (NoSuchElementException e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -132,6 +134,19 @@ public class WorkoutProgramController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+//    @GetMapping("/{id}/parts")
+//    public ResponseEntity getProgramPartList(@PathVariable Long id) {
+//        try {
+//            return ResponseEntity.status(HttpStatus.OK).body(partService.list(id));
+//        } catch (NoSuchElementException e) {
+//            log.error(e.getMessage());
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//        } catch (Exception e) {
+//            log.error(e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//        }
+//    }
 
     @PutMapping ("/{id}/parts/{partId}")
     public ResponseEntity modifyProgramPart(@PathVariable Long id, @PathVariable Long partId, @RequestBody WorkoutProgramPartDto dto) {
