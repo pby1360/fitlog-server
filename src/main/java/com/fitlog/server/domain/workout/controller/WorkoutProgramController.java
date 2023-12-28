@@ -1,6 +1,7 @@
 package com.fitlog.server.domain.workout.controller;
 
 import com.fitlog.server.domain.workout.dto.*;
+import com.fitlog.server.domain.workout.entity.WorkoutPartItem;
 import com.fitlog.server.domain.workout.entity.WorkoutProgramPartItemSet;
 import com.fitlog.server.domain.workout.service.WorkoutProgramPartItemService;
 import com.fitlog.server.domain.workout.service.WorkoutProgramPartItemSetService;
@@ -213,6 +214,17 @@ public class WorkoutProgramController {
         }
     }
 
+    @PutMapping("/{id}/parts/{partId}/items")
+    public ResponseEntity modifyProgramPartItemOrder(@RequestBody List<WorkoutProgramPartItemDto> itemList) {
+        try {
+            partItemService.modifyOrder(itemList);
+            return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @PutMapping("/{id}/parts/{partId}/items/{itemId}")
     public ResponseEntity modifyProgramPartItem(@RequestBody WorkoutProgramPartItemDto item) {
         try {
@@ -228,6 +240,7 @@ public class WorkoutProgramController {
     public ResponseEntity deleteProgramPartItem(@PathVariable Long itemId) {
         try {
             partItemService.delete(itemId);
+            partItemSetService.deleteByWorkoutProgramPartItemId(itemId);
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (Exception e) {
             log.error(e.getMessage());

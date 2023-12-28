@@ -10,4 +10,5 @@ import java.util.List;
 public interface WorkoutProgramPartItemSetRepository extends JpaRepository<WorkoutProgramPartItemSet, Long> {
 
     List<WorkoutProgramPartItemSet> findByWorkoutProgramPartItemId(Long itemId);
+    void deleteAllByWorkoutProgramPartItemId(Long workoutProgramPartItemId);
 }

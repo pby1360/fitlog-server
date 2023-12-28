@@ -44,6 +44,11 @@ public class WorkoutProgramPartItemSetService {
         repository.deleteById(id);
     }
 
+    public void deleteByWorkoutProgramPartItemId (Long workoutProgramPartItemId) {
+        repository.deleteAllByWorkoutProgramPartItemId(workoutProgramPartItemId);
+
+    }
+
 
 
 

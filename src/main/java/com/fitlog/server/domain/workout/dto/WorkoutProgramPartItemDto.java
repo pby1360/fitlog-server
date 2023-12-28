@@ -9,6 +9,7 @@ public record WorkoutProgramPartItemDto(
         Long id,
         Long workoutProgramPartId,
         Long workoutPartItemId,
+        String name,
         int order,
 //        int totalSet,
 //        int totalCount,
@@ -22,7 +23,27 @@ public record WorkoutProgramPartItemDto(
         return new WorkoutProgramPartItemDto(
                 entity.getId(),
                 entity.getWorkoutProgramPartId(),
-                entity.getWorkoutPartItemId(),
+//                entity.getWorkoutPartItemId(),
+                entity.getWorkoutPartItem().getId(),
+                entity.getWorkoutPartItem().getName(),
+                entity.getOrder(),
+//                entity.getSetList().size(),
+//                entity.getSetList().stream().mapToInt(set -> set.getCount()).sum(),
+                entity.getDescription(),
+                entity.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                entity.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                entity.getMemo()
+//                entity.getSetList().stream().map(set -> WorkoutProgramPartItemSetDto.toDto(set)).toList()
+        );
+    }
+
+    public static WorkoutProgramPartItemDto toEn (WorkoutProgramPartItem entity) {
+        return new WorkoutProgramPartItemDto(
+                entity.getId(),
+                entity.getWorkoutProgramPartId(),
+//                entity.getWorkoutPartItemId(),
+                entity.getWorkoutPartItem().getId(),
+                entity.getWorkoutPartItem().getName(),
                 entity.getOrder(),
 //                entity.getSetList().size(),
 //                entity.getSetList().stream().mapToInt(set -> set.getCount()).sum(),
