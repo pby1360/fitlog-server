@@ -37,4 +37,10 @@ public class WorkoutPartItem extends BaseEntity {
         this.description = dto.getDescription();
         this.setMemo(dto.getMemo());
     }
+
+    public static WorkoutPartItem of (Long id) {
+        WorkoutPartItem entity = new WorkoutPartItem();
+        entity.id = id;
+        return entity;
+    }
 }
