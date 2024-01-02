@@ -31,6 +31,7 @@ public class WorkoutProgramPartItemSetService {
 
     public void add (WorkoutProgramPartItemSetDto dto) {
         WorkoutProgramPartItemSet newItem = WorkoutProgramPartItemSet.create(dto);
+        newItem.setOrder(repository.findByWorkoutProgramPartItemId(dto.workoutProgramPartItemId()).size() + 1);
         repository.save(newItem);
     }
 
