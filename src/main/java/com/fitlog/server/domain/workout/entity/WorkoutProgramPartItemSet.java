@@ -22,6 +22,10 @@ public class WorkoutProgramPartItemSet extends BaseEntity {
     private int restTime;
     private String description;
 
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
     public static WorkoutProgramPartItemSet create (WorkoutProgramPartItemSetDto dto) {
 
         WorkoutProgramPartItemSet newEntity = new WorkoutProgramPartItemSet();
@@ -41,5 +45,10 @@ public class WorkoutProgramPartItemSet extends BaseEntity {
         this.order = dto.order();
         this.restTime = dto.restTime();
         this.description = dto.description();
+        setMemo(dto.memo());
+    }
+
+    public void modifyOrder (int order) {
+        this.order = order;
     }
 }

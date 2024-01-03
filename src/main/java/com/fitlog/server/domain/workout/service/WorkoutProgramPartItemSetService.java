@@ -1,10 +1,12 @@
 package com.fitlog.server.domain.workout.service;
 
+import com.fitlog.server.domain.workout.dto.WorkoutProgramPartItemDto;
 import com.fitlog.server.domain.workout.dto.WorkoutProgramPartItemSetDto;
 import com.fitlog.server.domain.workout.entity.WorkoutProgramPartItemSet;
 import com.fitlog.server.domain.workout.repository.WorkoutProgramPartItemSetRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -26,11 +28,13 @@ public class WorkoutProgramPartItemSetService {
         return repository.findByWorkoutProgramPartItemId(itemId)
                 .stream()
                 .map(item -> WorkoutProgramPartItemSetDto.toDto(item))
+                .sorted(Comparator.comparingInt(WorkoutProgramPartItemSetDto::order))
                 .toList();
     }
 
     public void add (WorkoutProgramPartItemSetDto dto) {
         WorkoutProgramPartItemSet newItem = WorkoutProgramPartItemSet.create(dto);
+        newItem.setOrder(repository.findByWorkoutProgramPartItemId(dto.workoutProgramPartItemId()).size() + 1);
         repository.save(newItem);
     }
 
@@ -46,10 +50,14 @@ public class WorkoutProgramPartItemSetService {
 
     public void deleteByWorkoutProgramPartItemId (Long workoutProgramPartItemId) {
         repository.deleteAllByWorkoutProgramPartItemId(workoutProgramPartItemId);
-
     }
 
-
-
+    public void modifyOrder (List<WorkoutProgramPartItemSetDto> setList) {
+        setList.forEach(set -> repository.findById(set.id()).ifPresent((entity) -> {
+            int index = setList.indexOf(set);
+            entity.modifyOrder(index + 1);
+            repository.save(entity);
+        }));
+    }
 
 }

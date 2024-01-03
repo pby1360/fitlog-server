@@ -261,10 +261,25 @@ public class WorkoutProgramController {
         }
     }
 
+//    @GetMapping("/{id}/parts/{partId}/items/{itemId}/sets")
+//    public ResponseEntity getProgramPartItemSetList(@PathVariable Long id, @PathVariable Long partId) {
+//        try {
+//            return ResponseEntity.status(HttpStatus.OK).body(partItemSetService.list(partId));
+//        } catch (NoSuchElementException e) {
+//            log.error(e.getMessage());
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//        } catch (Exception e) {
+//            log.error(e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//        }
+//    }
+
     @GetMapping("/{id}/parts/{partId}/items/{itemId}/sets")
-    public ResponseEntity getProgramPartItemSetList(@PathVariable Long id, @PathVariable Long partId) {
+    public ResponseEntity getProgramPartItemSetList(@PathVariable Long itemId) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(partItemSetService.list(partId));
+            WorkoutProgramPartItemDto item = partItemService.detail(itemId);
+            List<WorkoutProgramPartItemSetDto> setList = partItemSetService.list(itemId);
+            return ResponseEntity.status(HttpStatus.OK).body(WorkoutProgramPartItemWithSetsDto.of(item, setList));
         } catch (NoSuchElementException e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -279,6 +294,17 @@ public class WorkoutProgramController {
         try {
             partItemSetService.add(newPartItemSet);
             return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PutMapping("/{id}/parts/{partId}/items/{itemId}/sets")
+    public ResponseEntity modifyProgramPartItemSetOrder(@RequestBody List<WorkoutProgramPartItemSetDto> setList) {
+        try {
+            partItemSetService.modifyOrder(setList);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
