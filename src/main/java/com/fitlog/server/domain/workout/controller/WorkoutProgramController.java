@@ -300,6 +300,17 @@ public class WorkoutProgramController {
         }
     }
 
+    @PutMapping("/{id}/parts/{partId}/items/{itemId}/sets")
+    public ResponseEntity modifyProgramPartItemSetOrder(@RequestBody List<WorkoutProgramPartItemSetDto> setList) {
+        try {
+            partItemSetService.modifyOrder(setList);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @PutMapping("/{id}/parts/{partId}/items/{itemId}/sets/{setId}")
     public ResponseEntity modifyProgramPartItemSet(@RequestBody WorkoutProgramPartItemSetDto itemSet) {
         try {

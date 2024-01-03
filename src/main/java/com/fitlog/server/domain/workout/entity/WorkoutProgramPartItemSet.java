@@ -45,5 +45,10 @@ public class WorkoutProgramPartItemSet extends BaseEntity {
         this.order = dto.order();
         this.restTime = dto.restTime();
         this.description = dto.description();
+        setMemo(dto.memo());
+    }
+
+    public void modifyOrder (int order) {
+        this.order = order;
     }
 }
