@@ -23,41 +23,20 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.authorizeHttpRequests()
-                .requestMatchers("/auth/**")
-                .permitAll()
-                .anyRequest().authenticated()
-                .and().cors().configurationSource(corsConfigurationSource())
-                .and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
-                .and()
-                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class).build();
+        return http
+                .authorizeHttpRequests(authorize ->
+                        authorize.requestMatchers("/auth/**")
+                                .permitAll()
+                                .anyRequest().authenticated())
+                .cors(cors -> corsConfigurationSource())
+                .csrf(csrf -> csrf.disable()).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .exceptionHandling(handle ->
+//                        handle.accessDeniedHandler(new CustomAccessDeniedHandler())
+//                                .authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .build()
+                ;
     }
-
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                .httpBasic().disable()
-//                .cors().configurationSource(corsConfigurationSource())
-//                .and()
-//                .csrf().disable()
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .authorizeRequests()
-//                .antMatchers("/auth/**")
-//                .permitAll()
-//                .anyRequest()
-//                .authenticated()
-//                .and()
-//                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
-//                .and()
-//                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-//                .and()
-//                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
-//    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
