@@ -1,8 +1,5 @@
 package com.fitlog.server.domain.workout.dto;
 
-import com.fitlog.server.domain.workout.entity.WorkoutProgramPart;
-
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public record WorkoutProgramPartWithItemsDto(

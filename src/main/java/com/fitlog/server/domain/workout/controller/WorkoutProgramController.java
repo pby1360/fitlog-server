@@ -131,7 +131,7 @@ public class WorkoutProgramController {
             WorkoutProgramDto program= service.detail(id);
             if (StringUtils.hasText(include) && include.equals("item")) {
                 List<WorkoutProgramPartWithItemsDto> programPartList = partService.list(id).stream().map(part -> {
-                    List<WorkoutProgramPartItemDto> itemList = partItemService.list(part.workoutPartId());
+                    List<WorkoutProgramPartItemDto> itemList = partItemService.list(part.id());
                     return WorkoutProgramPartWithItemsDto.of(part, itemList);
                 }).toList();
                 return ResponseEntity.status(HttpStatus.OK).body(WorkoutProgramWithPartsIncludeItemsDto.of(program, programPartList));
