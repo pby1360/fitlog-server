@@ -3,6 +3,7 @@ package com.fitlog.server.domain.workout.entity;
 import com.fitlog.server.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Objects;
@@ -16,13 +17,14 @@ public class WorkoutRoutineSet extends BaseEntity {
     @Id
     @Column(name = "id")
     private Long id;
-    @Column(name = "workout_routine_item_id")
-    private Long workoutRoutineItemId;
+    @ManyToOne
+    @JoinColumn(name = "workout_routine_item_id")
+    private WorkoutRoutineItem workoutRoutineItem;
     @Column(name = "description")
     private String description;
     @Column(name = "status")
     private String status;
-    @Column(name = "order")
+    @Column(name = "`order`")
     private Integer order;
     @Column(name = "duration")
     private Integer duration;
@@ -34,4 +36,15 @@ public class WorkoutRoutineSet extends BaseEntity {
     private Integer targetRestTime;
     @Column(name = "rest_time")
     private Integer restTime;
+
+    public static WorkoutRoutineSet create(WorkoutRoutineItem workoutRoutineItem, String description, Integer order, Integer targetCount, Integer targetRestTime) {
+        WorkoutRoutineSet newSet = new WorkoutRoutineSet();
+        newSet.status = "10";
+        newSet.workoutRoutineItem = workoutRoutineItem;
+        newSet.description = description;
+        newSet.order = order;
+        newSet.targetCount = targetCount;
+        newSet.targetRestTime = targetRestTime;
+        return newSet;
+    }
 }
