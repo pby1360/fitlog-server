@@ -2,6 +2,7 @@ package com.fitlog.server.domain.workout.controller;
 
 import com.fitlog.server.domain.workout.dto.*;
 import com.fitlog.server.domain.workout.entity.WorkoutPartItem;
+import com.fitlog.server.domain.workout.entity.WorkoutProgramPartItem;
 import com.fitlog.server.domain.workout.entity.WorkoutProgramPartItemSet;
 import com.fitlog.server.domain.workout.service.WorkoutProgramPartItemService;
 import com.fitlog.server.domain.workout.service.WorkoutProgramPartItemSetService;
@@ -10,6 +11,8 @@ import com.fitlog.server.domain.workout.service.WorkoutProgramService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -122,11 +125,20 @@ public class WorkoutProgramController {
     }
 
     @GetMapping("/{id}/parts")
-    public ResponseEntity getProgramWithPartList(@PathVariable Long id) {
+    public ResponseEntity getProgramWithPartList(@PathVariable Long id, @RequestParam @Nullable String include) {
+
         try {
             WorkoutProgramDto program= service.detail(id);
-            List<WorkoutProgramPartDto> programPartList = partService.list(id);
-            return ResponseEntity.status(HttpStatus.OK).body(WorkoutProgramWithPartsDto.of(program, programPartList));
+            if (StringUtils.hasText(include) && include.equals("item")) {
+                List<WorkoutProgramPartWithItemsDto> programPartList = partService.list(id).stream().map(part -> {
+                    List<WorkoutProgramPartItemDto> itemList = partItemService.list(part.id());
+                    return WorkoutProgramPartWithItemsDto.of(part, itemList);
+                }).toList();
+                return ResponseEntity.status(HttpStatus.OK).body(WorkoutProgramWithPartsIncludeItemsDto.of(program, programPartList));
+            } else {
+                List<WorkoutProgramPartDto> programPartList = partService.list(id);
+                return ResponseEntity.status(HttpStatus.OK).body(WorkoutProgramWithPartsDto.of(program, programPartList));
+            }
         } catch (NoSuchElementException e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
