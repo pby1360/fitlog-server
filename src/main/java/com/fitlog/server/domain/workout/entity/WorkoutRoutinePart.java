@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,6 +35,10 @@ public class WorkoutRoutinePart extends BaseEntity {
     private Integer order;
     @Column(name = "duration")
     private Integer duration;
+    @Column(name = "started_at")
+    private LocalDateTime startedAt;
+    @Column(name = "finished_at")
+    private LocalDateTime finishedAt;
     @OneToMany(mappedBy = "workoutRoutinePart", cascade = CascadeType.ALL)
     private List<WorkoutRoutineItem> workoutRoutineItems;
 

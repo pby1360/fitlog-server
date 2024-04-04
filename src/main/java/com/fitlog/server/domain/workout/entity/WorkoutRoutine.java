@@ -1,10 +1,12 @@
 package com.fitlog.server.domain.workout.entity;
 
 import com.fitlog.server.common.BaseEntity;
+import com.fitlog.server.domain.workout.type.ProgressStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,11 @@ public class WorkoutRoutine extends BaseEntity {
     private String status;
     @Column(name = "duration")
     private Integer duration;
+    @Column(name = "started_at")
+    private LocalDateTime startedAt;
+    @Column(name = "finished_at")
+    private LocalDateTime finishedAt;
+
     @OneToMany(mappedBy = "workoutRoutine", cascade = CascadeType.ALL)
     private List<WorkoutRoutinePart> workoutRoutineParts;
 
@@ -45,5 +52,23 @@ public class WorkoutRoutine extends BaseEntity {
         newRoutine.description = description;
         newRoutine.workoutRoutineParts = new ArrayList<>();
         return newRoutine;
+    }
+
+    public void start () {
+        if (!ProgressStatus.대기.getCode().equals(this.status) && !ProgressStatus.완료.getCode().equals(this.status)) {
+            throw new IllegalStateException("대기 상태에서만 시작할 수 있습니다.");
+        }
+        this.startedAt = LocalDateTime.now();
+        this.status = ProgressStatus.진행중.getCode();
+        this.finishedAt = null;
+    }
+
+    public void finish () {
+        if (!ProgressStatus.진행중.getCode().equals(this.status)) {
+            throw new IllegalStateException("진행 중 상태에서만 종료할 수 있습니다.");
+        }
+        this.finishedAt = LocalDateTime.now();
+        this.status = ProgressStatus.완료.getCode();
+        // TODO: 2024-04-02 duration에 값 넣기
     }
 }

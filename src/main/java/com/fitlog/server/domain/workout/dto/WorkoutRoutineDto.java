@@ -15,6 +15,6 @@ public record WorkoutRoutineDto(
         List<WorkoutRoutinePartDto> workoutRoutinePartList
 ) {
     public static WorkoutRoutineDto toDto (WorkoutRoutine entity) {
-        return new WorkoutRoutineDto (entity.getId(), entity.getUserId(),entity.getWorkoutProgramId(), entity.getName(), entity.getDescription(), entity.getStatus(), entity.getDuration(), null);
+        return new WorkoutRoutineDto (entity.getId(), entity.getUserId(),entity.getWorkoutProgramId(), entity.getName(), entity.getDescription(), entity.getStatus(), entity.getDuration(), entity.getWorkoutRoutineParts().stream().map(WorkoutRoutinePartDto::toDto).toList());
     }
 }
