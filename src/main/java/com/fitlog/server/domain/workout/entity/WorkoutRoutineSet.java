@@ -1,11 +1,13 @@
 package com.fitlog.server.domain.workout.entity;
 
 import com.fitlog.server.common.BaseEntity;
+import com.fitlog.server.domain.workout.type.ProgressStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -46,5 +48,15 @@ public class WorkoutRoutineSet extends BaseEntity {
         newSet.targetCount = targetCount;
         newSet.targetRestTime = targetRestTime;
         return newSet;
+    }
+
+    public void complete(int count) {
+        this.count = count;
+        this.status = ProgressStatus.완료.getCode();
+    }
+
+    public void clear () {
+        this.count = 0;
+        this.status = ProgressStatus.대기.getCode();
     }
 }
