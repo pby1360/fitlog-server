@@ -1,6 +1,7 @@
 package com.fitlog.server.domain.workout.entity;
 
 import com.fitlog.server.common.BaseEntity;
+import com.fitlog.server.domain.workout.type.ProgressStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -57,5 +58,22 @@ public class WorkoutRoutinePart extends BaseEntity {
         newPart.order = order;
         newPart.workoutRoutineItems = new ArrayList<>();
         return newPart;
+    }
+
+    public void start () {
+        this.status = ProgressStatus.진행중.getCode();
+        this.startedAt = LocalDateTime.now();
+        this.finishedAt = null;
+    }
+
+    public void finish () {
+        this.status = ProgressStatus.완료.getCode();
+        this.finishedAt = LocalDateTime.now();
+    }
+
+    public void clear () {
+        this.status = ProgressStatus.대기.getCode();
+        this.startedAt = null;
+        this.finishedAt = null;
     }
 }

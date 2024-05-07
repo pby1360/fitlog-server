@@ -10,9 +10,12 @@ import com.fitlog.server.domain.workout.type.ProgressStatus;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,10 +24,10 @@ import java.util.stream.Collectors;
 public class WorkoutRoutineService {
 
     private WorkoutRoutineRepository repository;
-    private WorkoutProgramPartItemSetService programPartItemSetService;
-    private WorkoutRoutineSetService routineSetService;
-
+    private WorkoutRoutinePartService routinePartService;
     private WorkoutRoutineItemService routineItemService;
+    private WorkoutRoutineSetService routineSetService;
+    private WorkoutProgramPartItemSetService programPartItemSetService;
 
     public WorkoutRoutineDto create (WorkoutRoutineDto routineDto) {
         WorkoutRoutine routine = WorkoutRoutine.create(routineDto.userId(), routineDto.workoutProgramId(), routineDto.name(), routineDto.description());
@@ -121,7 +124,7 @@ public class WorkoutRoutineService {
                 routine.getWorkoutRoutineParts().stream()
                         .map(part ->
                                 part.getWorkoutRoutineItems().stream()
-                                        .filter(item -> ProgressStatus.of(part.getStatus()) == ProgressStatus.완료)
+                                        .filter(item -> ProgressStatus.of(item.getStatus()) == ProgressStatus.완료)
                                         .collect(Collectors.toList()).size())
                         .mapToInt(Integer::intValue).sum();
         int totalItemCount = routine.getWorkoutRoutineParts().stream().map(part -> part.getWorkoutRoutineItems().size()).mapToInt(Integer::intValue).sum();
@@ -129,7 +132,7 @@ public class WorkoutRoutineService {
         int setCount = routine.getWorkoutRoutineParts().stream()
                 .map(part ->
                         part.getWorkoutRoutineItems().stream()
-                                .filter(item -> ProgressStatus.of(part.getStatus()) == ProgressStatus.완료 && item.getWorkoutRoutineSets().size() > 0)
+                                .filter(item -> ProgressStatus.of(item.getStatus()) == ProgressStatus.완료 || ProgressStatus.of(item.getStatus()) == ProgressStatus.진행중)
                                 .map(item ->
                                         item.getWorkoutRoutineSets().stream()
                                                 .filter(set ->
@@ -152,16 +155,19 @@ public class WorkoutRoutineService {
         RoutineInfo routineInfo = new RoutineInfo(
                 routine.getId(),
                 routine.getName(),
-                routine.getStartedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                Optional.ofNullable(routine.getStartedAt()).map(time -> time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).orElse(null),
+                Optional.ofNullable(routine.getFinishedAt()).map(time -> time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).orElse(null),
                 routine.getDescription(),
-                ProgressStatus.of(routine.getStatus()),
                 routine.getStatus(),
+                ProgressStatus.of(routine.getStatus()),
                 currentPart.getId(),
                 currentPart.getName(),
+                currentPart.getStatus(),
+                ProgressStatus.of(currentPart.getStatus()),
                 currentItem.getId(),
                 currentItem.getName(),
-                ProgressStatus.of(currentItem.getStatus()),
-                currentItem.getStatus()
+                currentItem.getStatus(),
+                ProgressStatus.of(currentItem.getStatus())
         );
 
         Routine currentRoutine  = new Routine(routineInfo, counter, timer, chart);
@@ -171,27 +177,70 @@ public class WorkoutRoutineService {
         return currentRoutine;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void startRoutine (Long routineId) {
         WorkoutRoutine routine = repository.findById(routineId).orElseThrow();
         routine.start();
         repository.save(routine);
+
+        routine.getWorkoutRoutineParts()
+                .stream()
+                .sorted(Comparator.comparing(WorkoutRoutinePart::getOrder))
+                .findFirst()
+                .ifPresent(part -> routinePartService.startPart(part.getId()));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void finishRoutine (Long routineId) {
         WorkoutRoutine routine = repository.findById(routineId).orElseThrow();
         routine.finish();
         repository.save(routine);
+        routine.getWorkoutRoutineParts()
+                .stream()
+                .filter(part -> part.getStatus().equals(ProgressStatus.진행중.getCode()))
+                .findFirst()
+                .ifPresent(part -> {
+                    routinePartService.finishPart(part.getId());
+                    part.getWorkoutRoutineItems()
+                            .stream()
+                            .filter(item -> item.getStatus().equals(ProgressStatus.진행중.getCode()))
+                            .findFirst()
+                            .ifPresent(item -> {
+                                routineItemService.finishItem(item.getId());
+                            });
+                });
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void clearRoutine (Long routineId) {
+        WorkoutRoutine routine = repository.findById(routineId).orElseThrow();
+        routine.clear(); /* routine clear */
+        routine.getWorkoutRoutineParts().stream().forEach(part -> {
+           routinePartService.clearPart(part.getId()); /* part clear */
+           part.getWorkoutRoutineItems().stream().forEach(item -> {
+               routineItemService.clearItem(item.getId()); /* item clear */
+               routineSetService.clear(item.getId());
+           });
+        });
+        repository.save(routine);
+    }
+
+    public void startItem (Long routineItemId) {
+        routineItemService.startItem(routineItemId);
+    }
+
+    @Transactional
     public void setRoutineItem(Long routineItemId, int count) {
+        routineItemService.startItem(routineItemId);
         routineSetService.set(routineItemId, count);
+    }
+    @Transactional
+    public void finishRoutineItem(Long routinePartId, Long routineItemId) {
+        routineItemService.finishItem(routineItemId);
+        routinePartService.nextPart(routinePartId);
     }
 
     public void clearRoutineItem(Long routineItemId) {
         routineSetService.clear(routineItemId);
-    }
-
-    public void startItem (Long routineItemId) {
-        routineItemService.start(routineItemId);
     }
 }

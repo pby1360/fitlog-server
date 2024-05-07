@@ -10,15 +10,18 @@ public record RoutineInfo (
         Long routineId,
         String programName,
         String programStartedAt,
+        String programFinishedAt,
         String programDescription,
-        ProgressStatus statusName,
         String status,
+        ProgressStatus statusName,
         Long routinePartId,
         String partName,
+        String partStatus,
+        ProgressStatus partStatusName,
         Long routineItemId,
         String itemName,
-        ProgressStatus itemStatusName,
-        String itemStatus
+        String itemStatus,
+        ProgressStatus itemStatusName
 ){
 
 

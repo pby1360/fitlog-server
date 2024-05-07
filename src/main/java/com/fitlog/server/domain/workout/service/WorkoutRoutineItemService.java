@@ -2,20 +2,34 @@ package com.fitlog.server.domain.workout.service;
 
 import com.fitlog.server.domain.workout.entity.WorkoutRoutineItem;
 import com.fitlog.server.domain.workout.repository.WorkoutRoutineItemRepository;
+import com.fitlog.server.domain.workout.type.ProgressStatus;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class WorkoutRoutineItemService {
     private WorkoutRoutineItemRepository repository;
 
-    public void start (Long id) {
+    public void startItem(Long id) {
         WorkoutRoutineItem item = repository.findById(id).orElseThrow();
-        item.start();
+        if (item.getStatus().equals(ProgressStatus.대기.getCode())) {
+            item.start();
+            repository.save(item);
+        }
+    }
+
+    public void clearItem(Long id) {
+        WorkoutRoutineItem item = repository.findById(id).orElseThrow();
+        if (!item.getStatus().equals(ProgressStatus.대기.getCode())) {
+            item.clear();
+            repository.save(item);
+        }
+    }
+
+    public void finishItem(Long id) {
+        WorkoutRoutineItem item = repository.findById(id).orElseThrow();
+        item.finish();
         repository.save(item);
     }
 }

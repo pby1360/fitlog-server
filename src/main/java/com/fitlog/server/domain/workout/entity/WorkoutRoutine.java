@@ -71,4 +71,13 @@ public class WorkoutRoutine extends BaseEntity {
         this.status = ProgressStatus.완료.getCode();
         // TODO: 2024-04-02 duration에 값 넣기
     }
+
+    public void clear () {
+        if (ProgressStatus.진행중.getCode().equals(this.status)) {
+            throw new IllegalStateException("진행중인 상태에선 초기화할 수 없습니다.");
+        }
+        this.startedAt = null;
+        this.finishedAt = null;
+        this.status = ProgressStatus.대기.getCode();
+    }
 }

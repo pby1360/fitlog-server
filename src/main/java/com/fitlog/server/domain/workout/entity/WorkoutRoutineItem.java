@@ -61,7 +61,19 @@ public class WorkoutRoutineItem extends BaseEntity {
     }
 
     public void start () {
-        this.startedAt = LocalDateTime.now();
         this.status = ProgressStatus.진행중.getCode();
+        this.startedAt = LocalDateTime.now();
+        this.finishedAt = null;
+    }
+
+    public void finish () {
+        this.status = ProgressStatus.완료.getCode();
+        this.finishedAt = LocalDateTime.now();
+    }
+
+    public void clear () {
+        this.status = ProgressStatus.대기.getCode();
+        this.startedAt = null;
+        this.finishedAt = null;
     }
 }

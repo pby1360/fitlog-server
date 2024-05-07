@@ -81,6 +81,20 @@ public class WorkoutRoutineController {
         }
     }
 
+    @PostMapping("/{id}/clear")
+    public ResponseEntity clearRoutine (@PathVariable Long id) {
+        try {
+            service.clearRoutine(id);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (NoSuchElementException | IllegalStateException e)  {
+            log.error("[WorkoutRoutineController.startRoutine] Bad Request", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            log.error("[WorkoutRoutineController.startRoutine] Unknown Exception", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @PostMapping("/{id}/parts/{routinePartId}/items/{routineItemId}/set")
     public ResponseEntity setRoutineItem (@PathVariable Long id, @PathVariable Long routinePartId, @PathVariable Long routineItemId, @RequestBody int count) {
         try {
@@ -113,6 +127,20 @@ public class WorkoutRoutineController {
     public ResponseEntity startRoutineItem (@PathVariable Long id, @PathVariable Long routinePartId, @PathVariable Long routineItemId) {
         try {
             service.startItem(routineItemId);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (NoSuchElementException | IllegalStateException e)  {
+            log.error("[WorkoutRoutineController.startRoutine] Bad Request", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            log.error("[WorkoutRoutineController.startRoutine] Unknown Exception", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PostMapping("/{id}/parts/{routinePartId}/items/{routineItemId}/finish")
+    public ResponseEntity finishRoutineItem (@PathVariable Long id, @PathVariable Long routinePartId, @PathVariable Long routineItemId) {
+        try {
+            service.finishRoutineItem(routinePartId, routineItemId);
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (NoSuchElementException | IllegalStateException e)  {
             log.error("[WorkoutRoutineController.startRoutine] Bad Request", e);
