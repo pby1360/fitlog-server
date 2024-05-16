@@ -142,11 +142,21 @@ public class WorkoutRoutineController {
         try {
             service.finishRoutineItem(routinePartId, routineItemId);
             return ResponseEntity.status(HttpStatus.OK).body(null);
-        } catch (NoSuchElementException | IllegalStateException e)  {
+        } catch (NoSuchElementException | IllegalStateException e) {
             log.error("[WorkoutRoutineController.startRoutine] Bad Request", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
             log.error("[WorkoutRoutineController.startRoutine] Unknown Exception", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity getRoutineList (@PathVariable Long userId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(service.getRoutineList(userId));
+        } catch (Exception e) {
+            log.error("[WorkoutRoutineController.createRoutine] Unknown Exception", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
