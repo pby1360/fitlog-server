@@ -243,4 +243,14 @@ public class WorkoutRoutineService {
     public void clearRoutineItem(Long routineItemId) {
         routineSetService.clear(routineItemId);
     }
+
+    public List<WorkoutRoutineDto> getRoutineList(Long userId) {
+        return repository.findByCreatedByOrderByCreatedDateDesc(userId).stream().map(routine -> WorkoutRoutineDto.toDto(routine.getId(), routine.getUserId(), routine.getName(), routine.getDescription(), routine.getStatus(), ProgressStatus.of(routine.getStatus()).name(), routine.getStartedAt() != null ? routine.getStartedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) : null, routine.getFinishedAt() != null ? routine.getFinishedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) : null)).collect(Collectors.toList());
+    }
+
+    public void deleteRoutine(Long routineId) {
+        repository.deleteById(routineId);
+    }
+
+
 }

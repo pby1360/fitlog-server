@@ -5,6 +5,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+/src/main/resources/application-local.yml
+/src/main/resources/application-product.yml
+
 ### STS ###
 .apt_generated
 .classpath
@@ -35,3 +38,5 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Exclude application.yml file
