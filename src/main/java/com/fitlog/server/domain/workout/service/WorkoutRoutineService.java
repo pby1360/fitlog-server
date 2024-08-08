@@ -251,6 +251,4 @@ public class WorkoutRoutineService {
     public void deleteRoutine(Long routineId) {
         repository.deleteById(routineId);
     }
-
-
 }

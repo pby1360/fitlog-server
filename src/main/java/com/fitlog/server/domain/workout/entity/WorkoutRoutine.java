@@ -35,7 +35,6 @@ public class WorkoutRoutine extends BaseEntity {
     private LocalDateTime startedAt;
     @Column(name = "finished_at")
     private LocalDateTime finishedAt;
-
     @OneToMany(mappedBy = "workoutRoutine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WorkoutRoutinePart> workoutRoutineParts;
 
